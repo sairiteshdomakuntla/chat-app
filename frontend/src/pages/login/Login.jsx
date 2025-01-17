@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { MessageSquare, User, KeyRound, Eye, EyeOff } from "lucide-react";
+import useLogin from "../../hooks/useLogin";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const {loading, login} = useLogin();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000);
+    await login(username,password);
   };
 
   return (
@@ -22,10 +23,7 @@ const Login = () => {
       </div>
 
       <div className="relative w-full max-w-lg lg:max-w-2xl xl:max-w-3xl">
-        <div className="absolute inset-0 bg-white/10 backdrop-blur-lg rounded-3xl shadow-xl transform rotate-2"></div>
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-lg rounded-3xl shadow-xl transform -rotate-2"></div>
-
-        <div className="relative bg-white/20 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 p-8 md:p-12 lg:p-16">
+        <div className="relative bg-white/20 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 lg:p-16">
           <div className="text-center mb-8">
             <div className="inline-block p-4 bg-white/10 backdrop-blur-md rounded-full shadow-inner">
               <MessageSquare className="w-10 h-10 text-white/90" />
@@ -49,7 +47,6 @@ const Login = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all duration-300"
                 placeholder="Enter username"
-                required
               />
             </div>
 
@@ -63,7 +60,6 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all duration-300"
                 placeholder="Enter password"
-                required
               />
               <button
                 type="button"
@@ -98,19 +94,10 @@ const Login = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
-              className={`w-full py-3 rounded-lg text-white font-bold bg-gradient-to-r from-purple-500 to-pink-500 hover:to-purple-600 focus:ring-4 focus:ring-purple-500 transition-all ${
-                isLoading ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+              className="w-full py-3 rounded-lg text-white font-bold bg-gradient-to-r from-purple-500 to-pink-500 hover:to-purple-600 focus:ring-4 focus:ring-purple-500 transition-all"
+              disabled={loading}
             >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-                  Signing in...
-                </span>
-              ) : (
-                "Sign In"
-              )}
+              {loading ? <span className="loading loading-spinner"></span> : "Sign In"}
             </button>
 
             <div className="text-center mt-6">
@@ -128,7 +115,7 @@ const Login = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes blob {
           0% {
             transform: translate(0px, 0px) scale(1);
